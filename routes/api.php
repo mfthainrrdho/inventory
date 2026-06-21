@@ -22,4 +22,3 @@ Route::prefix('v1')->group(function () {
         Route::delete('items/{item}', [ItemController::class, 'destroy'])
             ->middleware('role:admin');
     });
-});
