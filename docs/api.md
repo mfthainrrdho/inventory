@@ -10,29 +10,32 @@
 ## Endpoints
 
 ### Auth
-- **POST** `/api/v1/register`
-- **POST** `/api/v1/login`
+- **POST** `/api/v1/register` - Register user baru
+- **POST** `/api/v1/login` - Login user
+
+---
 
 ### Items
-- **GET** `/api/v1/items`
-- **POST** `/api/v1/items`
-- **GET** `/api/v1/items/{id}`
-- **PUT** `/api/v1/items/{id}`
-- **DELETE** `/api/v1/items/{id}`
 
-### Categories (sama struktur)
+#### GET `/api/v1/items` - Get All Items (with optional category filter)
 
-**Response Success:**
+**Description:**  
+Mendapatkan semua data item. Endpoint ini mendukung filter opsional berdasarkan `category_id`.
+
+**Query Parameters:**
+- `category_id` (integer, **optional**) — ID kategori untuk memfilter items. Jika tidak dikirim, akan mengembalikan semua items.
+
+**Headers:**  
+`Authorization: Bearer {token}` (jika endpoint protected)
+
+**Contoh Request:**
+GET /api/v1/items
+GET /api/v1/items?category_id=3
+
+**Contoh Response Sukses:**
 ```json
 {
   "success": true,
-  "message": "Success",
-  "data": { ... }
-}
-
-**Response Error:**
-{
-    "success": false,
-    "message": "Item not Found",
-    "errors": []
+  "data": [ ... ],
+  "message": "Items retrieved successfully"
 }
