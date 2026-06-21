@@ -6,6 +6,7 @@ use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\UpdateItemRequest;
 use App\Services\ItemService;
 use App\Http\Controllers\Api\BaseController;
+use Illuminate\Http\Request;
 
 class ItemController extends BaseController
 {
@@ -16,15 +17,38 @@ class ItemController extends BaseController
         $this->svc = $svc;
     }
 
-    public function index()
+    /**
+     * Get all items with optional category filter
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index(Request $request)
     {
-        return $this->success($this->svc->all(), 'Berhasil mengambil semua data Item');
+        try {
+            // Ambil semua item
+            $items = $this->svc->all();
+            
+            // Filter category_id jika ada
+            if ($request->filled('category_id')) {
+                $items = $items->where('category_id', (int) $request->category_id);
+            }
+            
+            return $this->success($items->values(), 'Berhasil mengambil semua data Item');
+        } catch (\Exception $e) {
+            // Jika error, kirim response error dengan pesan detail
+            return $this->error('Terjadi kesalahan: ' . $e->getMessage(), 500);
+        }
     }
 
     public function store(StoreItemRequest $req)
     {
-        $item = $this->svc->create($req->validated());
-        return $this->success($item, 'Item berhasil dibuat', 201);
+        try {
+            $item = $this->svc->create($req->validated());
+            return $this->success($item, 'Item berhasil dibuat', 201);
+        } catch (\Exception $e) {
+            return $this->error('Gagal membuat item: ' . $e->getMessage(), 500);
+        }
     }
 
     public function show($id)
