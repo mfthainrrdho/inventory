@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\UpdateItemRequest;
 use App\Services\ItemService;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\BaseController;
 
-class ItemController extends Controller
+class ItemController extends BaseController
 {
     protected ItemService $svc;
 
@@ -18,38 +18,22 @@ class ItemController extends Controller
 
     public function index()
     {
-        return response()->json([
-            'status' => 'success',
-            'data' => $this->svc->all(),
-            'message' => 'Berhasil menarik semua data Item'
-        ]);
+        return $this->success($this->svc->all(), 'Berhasil mengambil semua data Item');
     }
 
     public function store(StoreItemRequest $req)
     {
         $item = $this->svc->create($req->validated());
-        return response()->json([
-            'status' => 'success',
-            'data' => $item,
-            'message' => 'Item berhasil dibuat'
-        ], 201);
+        return $this->success($item, 'Item berhasil dibuat', 201);
     }
 
     public function show($id)
     {
         try {
             $item = $this->svc->find($id);
-            return response()->json([
-                'status' => 'success',
-                'data' => $item,
-                'message' => 'Berhasil mengambil data Item'
-            ]);
+            return $this->success($item, 'Berhasil mengambil data Item');
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'data' => null,
-                'message' => 'Item tidak ditemukan'
-            ], 404);
+            return $this->error('Item tidak ditemukan', 404);
         }
     }
 
@@ -57,17 +41,9 @@ class ItemController extends Controller
     {
         try {
             $item = $this->svc->update($id, $req->validated());
-            return response()->json([
-                'status' => 'success',
-                'data' => $item,
-                'message' => 'Item berhasil diupdate'
-            ]);
+            return $this->success($item, 'Item berhasil diperbarui');
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'data' => null,
-                'message' => 'Item tidak ditemukan'
-            ], 404);
+            return $this->error('Item tidak ditemukan', 404);
         }
     }
 
@@ -75,17 +51,9 @@ class ItemController extends Controller
     {
         try {
             $this->svc->delete($id);
-            return response()->json([
-                'status' => 'success',
-                'data' => null,
-                'message' => 'Item berhasil dihapus'
-            ]);
+            return $this->success(null, 'Item berhasil dihapus', 204);
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'data' => null,
-                'message' => 'Item tidak ditemukan'
-            ], 404);
+            return $this->error('Item tidak ditemukan', 404);
         }
     }
 }
