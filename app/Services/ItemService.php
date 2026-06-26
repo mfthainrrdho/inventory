@@ -4,11 +4,13 @@ namespace App\Services;
 
 use App\Models\Item;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class ItemService
 {
     public function all(): Collection
     {
+        
         return Item::with('category')->get();
     }
 
@@ -19,13 +21,24 @@ class ItemService
 
     public function create(array $data): Item
     {
-        return Item::create($data);
+        $item = Item::create($data);
+        Log::info('Item created', [
+            'id' => $item->id,
+            'data' => $data
+        ]);
+        
+        return $item;
     }
 
     public function update(int $id, array $data): Item
     {
         $item = Item::findOrFail($id);
         $item->update($data);
+        Log::info('Item updated', [
+            'id' => $id,
+            'changes' => $data
+        ]);
+        
         return $item;
     }
 
@@ -33,5 +46,8 @@ class ItemService
     {
         $item = Item::findOrFail($id);
         $item->delete();
+        Log::info('Item deleted', [
+            'id' => $id
+        ]);
     }
 }

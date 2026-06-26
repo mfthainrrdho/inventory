@@ -25,24 +25,28 @@ class ItemController extends BaseController
      */
     public function index(Request $request)
     {
+        // HAPUS: dd('Method index dipanggil!', $request->all());
+        
         try {
-            // Ambil semua item
             $items = $this->svc->all();
-            
-            // Filter category_id jika ada
+
             if ($request->filled('category_id')) {
                 $items = $items->where('category_id', (int) $request->category_id);
             }
             
+            // HAPUS: dd($items);
+            
             return $this->success($items->values(), 'Berhasil mengambil semua data Item');
         } catch (\Exception $e) {
-            // Jika error, kirim response error dengan pesan detail
+
             return $this->error('Terjadi kesalahan: ' . $e->getMessage(), 500);
         }
     }
 
     public function store(StoreItemRequest $req)
     {
+        // HAPUS: dd('Method store dipanggil!', $req->all(), $req->validated());
+        
         try {
             $item = $this->svc->create($req->validated());
             return $this->success($item, 'Item berhasil dibuat', 201);

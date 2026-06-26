@@ -10,15 +10,13 @@ Route::prefix('v1')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
-    // Protected routes dengan Sanctum
     Route::middleware('auth:sanctum')->group(function () {
-        // Categories - kecuali delete
         Route::apiResource('categories', CategoryController::class)->except(['destroy']);
         Route::delete('categories/{category}', [CategoryController::class, 'destroy'])
             ->middleware('role:admin');
         
-        // Items - kecuali delete
         Route::apiResource('items', ItemController::class)->except(['destroy']);
         Route::delete('items/{item}', [ItemController::class, 'destroy'])
             ->middleware('role:admin');
     });
+});
